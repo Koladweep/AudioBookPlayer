@@ -43,7 +43,7 @@ function removeOldLibrary() {
     pywebview.api.remove_old_library().then((resp) => {
         n.querySelector(".cross-btn").click()
         if (resp.status != "ok") return
-        createNotification(`<div><b>Deletion complete</b></div><div>Books deleted: ${data.removed_books_count}</div>`, 10, true)
+        createNotification(`<div><b>Deletion complete</b></div><div>Books deleted: ${resp.data.removed_books_count}</div>`, 10, true)
     })
 }
 
