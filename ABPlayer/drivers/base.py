@@ -20,7 +20,7 @@ if ty.TYPE_CHECKING:
 
 class DownloadProcessStatus(Enum):
     """
-    Download progress statuses.
+    Статусы прогресса скачивания.
     """
 
     WAITING = "waiting"
@@ -34,8 +34,8 @@ class DownloadProcessStatus(Enum):
 
 class BaseDownloadProcessHandler(ABC):
     """
-    Download process handler.
-    Visualizes the book download process.
+    Обработчик процесса скачивания.
+    Визуализирует процесс скачивания книги.
     >>> N = 10
     >>> process_handler = BaseDownloadProcessHandler()
     >>> process_handler.init(N, status=DownloadProcessStatus.DOWNLOADING)
@@ -72,7 +72,7 @@ class BaseDownloadProcessHandler(ABC):
     @abstractmethod
     def show_progress(self) -> None:
         """
-        Displays progress.
+        Отображает прогресс.
         """
 
     def __repr__(self):
@@ -86,7 +86,7 @@ class BaseDownloadProcessHandler(ABC):
 
 class BaseDownloader(ABC):
     """
-    File downloader.
+    Загрузчик файлов.
     """
 
     def __init__(
@@ -95,13 +95,13 @@ class BaseDownloader(ABC):
         self.book = book
         self.process_handler = process_handler
 
-        # Total file size (in bytes)
-        # Determined only if `process_handler` is passed
+        # Общий размер файлов(в байтах)
+        # Определяется, только если передан `process_handler`
         self.total_size: int | None = None
 
-        # File opened for writing
+        # Файл открытый для записи
         self._file: ty.TextIO | None = None
-        # File download stream
+        # Поток скачивания файла
         self._file_stream: requests.Response | None = None
         self._terminated: bool = False
 
@@ -112,20 +112,20 @@ class BaseDownloader(ABC):
     @abstractmethod
     def _prepare(self) -> None:
         """
-        Prepares the downloader for downloading.
-        This method must be implemented in the inherited class.
+        Подготавливает загрузчик к скачиванию.
+        Метод должен быть реализован в наследуемом классе.
         """
 
     @abstractmethod
     def _download_book(self) -> None:
         """
-        Downloads files.
-        This method must be implemented in the inherited class.
+        Скачивает файлы.
+        Метод должен быть реализован в наследуемом классе.
         """
 
     def save_preview(self) -> None:
         """
-        Downloads and saves the book cover.
+        Скачивает и сохраняет обложку книги.
         """
         if not self.book.preview:
             return
@@ -146,8 +146,8 @@ class BaseDownloader(ABC):
 
     def download_book(self) -> bool:
         """
-        Downloads book files.
-        :returns: List of paths to the downloaded files.
+        Скачивает файлы книги.
+        :returns: Список с путями к скачанным файлам.
         """
         logger.debug("preparing downloading")
         self._prepare()
@@ -167,11 +167,11 @@ class BaseDownloader(ABC):
                 self.process_handler.status = DownloadProcessStatus.TERMINATED
             logger.debug("terminated")
 
-        return not self._terminated  # True - if the download is successful
+        return not self._terminated  # True - при успешном скачивании
 
     def terminate(self) -> None:
         """
-        Interrupts the download.
+        Прерывает загрузку.
         """
         logger.opt(colors=True).debug(f"<y>{self}</y> terminating")
         self.process_handler.status = DownloadProcessStatus.TERMINATING
@@ -198,7 +198,7 @@ class BaseDownloader(ABC):
 
 
 class Driver(ABC):
-    drivers: list[ty.Type[Driver]] = [] # All available drivers
+    drivers: list[ty.Type[Driver]] = []  # Все доступные драйверы
 
     site_url = NotImplementedVariable()
     downloader_factory = NotImplementedVariable()
@@ -218,48 +218,48 @@ class Driver(ABC):
     @staticmethod
     def get_page(url: str) -> requests.Response:
         """
-        :param url: Link to the book.
-        :returns: Result of the GET request.
+        :param url: Ссылка на книгу.
+        :returns: Результат GET запроса.
         """
         return requests.get(url)
 
     @abstractmethod
     def get_book(self, url: str) -> Book:
         """
-        Method to get information about the book.
-        Must be implemented separately for each driver.
-        :param url: Link to the book.
-        :returns: Book instance.
+        Метод, получающий информацию о книге.
+        Должен быть реализован для каждого драйвера отдельно.
+        :param url: Ссылка на книгу.
+        :returns: Экземпляр книги.
         """
 
     @abstractmethod
     def get_book_series(self, url: str) -> list[Book]:
         """
-        Method to get information about books in a series.
-        Must be implemented separately for each driver.
-        :param url: Link to the book.
-        :returns: List of incomplete book instances.
+        Метод, получающий информацию о книгах из серии.
+        Должен быть реализован для каждого драйвера отдельно.
+        :param url: Ссылка на книгу.
+        :returns: Список неполных экземпляров книг.
         """
 
     @abstractmethod
     def search_books(self, query: str, limit: int = 10, offset: int = 0) -> list[Book]:
         """
-        Method to search for books by query.
-        Must be implemented separately for each driver.
-        :param query: Search query.
-        :param limit: Number of books to return.
-        :param offset: The first `offset` books will be skipped.
-        :returns: List of incomplete book instances.
+        Метод, выполняющий поиск книг по запросу.
+        Должен быть реализован для каждого драйвера отдельно.
+        :param query: Поисковый запрос.
+        :param limit: Кол-во книг, которое нужно вернуть.
+        :param offset: Будет пропущено `offset` первых книг.
+        :returns: Список неполных экземпляров книг.
         """
 
     def download_book(
         self, book: Book, process_handler: BaseDownloadProcessHandler | None = None
     ) -> bool:
         """
-        Method to download the book's audio files.
-        :param book: Book instance.
-        :param process_handler: Download process handler.
-        :return: List of file paths.
+        Метод, скачивающий аудио файлы книги.
+        :param book: Экземпляр книги.
+        :param process_handler: Обработчик процесса скачивания.
+        :return: Список путей к файлам.
         """
         self.downloader = self.downloader_factory(book, process_handler)
         return self.downloader.download_book()
@@ -268,4 +268,3 @@ class Driver(ABC):
     @property
     def driver_name(cls) -> str:
         return cls.__name__
-

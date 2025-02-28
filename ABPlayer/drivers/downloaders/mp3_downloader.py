@@ -22,8 +22,8 @@ if ty.TYPE_CHECKING:
 
 class MP3Downloader(BaseDownloader):
     """
-    Loader designed for books where files are presented
-    as separate or combined MP3 files.
+    Загрузчик, предназначенный для книг в которых файлы представлены
+    отдельными или объединенными MP3 файлами.
     """
 
     def __init__(
@@ -31,14 +31,14 @@ class MP3Downloader(BaseDownloader):
     ):
         super().__init__(book, process_handler)
 
-        self._files_urls = []  # File URLs
-        # True - if there is more than one chapter in a single audio file
+        self._files_urls = []  # Ссылки на файлы
+        # True - в одном аудио файле присутствует не одна глава
         self.merged: bool = False
 
     def _prepare(self) -> None:
         if self.process_handler:
             self.total_size = 0
-            # Initialize preparation progress
+            # Инициализируем прогресс подготовки
             self.process_handler.init(
                 len(self.book.items), status=DownloadProcessStatus.PREPARING
             )
@@ -53,7 +53,7 @@ class MP3Downloader(BaseDownloader):
             if (url := item.file_url) not in self._files_urls:
                 self._files_urls.append(url)
                 if self.process_handler:
-                    # Determine file size
+                    # Определяем размер файла
                     file_stream = requests.get(url, stream=True)
                     self.total_size += int(
                         file_stream.headers.get("content-length") or 0
@@ -64,7 +64,7 @@ class MP3Downloader(BaseDownloader):
 
     def _download_book(self) -> None:
         if self.process_handler:
-            # Initialize download progress
+            # Инициализируем прогресс скачивания
             self.process_handler.init(
                 self.total_size, status=DownloadProcessStatus.DOWNLOADING
             )
@@ -77,7 +77,7 @@ class MP3Downloader(BaseDownloader):
             if self.merged:
                 if item.file_url not in self._files_urls:
                     continue
-                # Exclude URL to avoid downloading the file again
+                # Исключаем ссылку, чтобы не скачивать файл второй раз
                 self._files_urls[item.file_index] = None
 
             file_path = self._get_file_path(item)
@@ -157,4 +157,3 @@ class MP3Downloader(BaseDownloader):
             self._file = None
 
         return True
-

@@ -12,4 +12,3 @@ else:
     ROOT_DIR = os.path.dirname(__file__)
 
 os.environ["FFPROBE_PATH"] = os.path.join(ROOT_DIR, r"bin\ffprobe.exe")
-

@@ -15,8 +15,8 @@ from .tools import safe_name
 
 
 """
-On the AKniga website, book information is loaded dynamically via JavaScript.
-Therefore, to get complete data about the book, we need a JavaScript runtime environment.
+На сайте AKniga информация о книге загружается динамически через JavaScript.
+Поэтому для получения полных данных о книге нам необходима среда исполнения JS.
 """
 
 
@@ -24,25 +24,25 @@ class BaseJsApi(ABC):
     @abstractmethod
     def get_book_data(self, url: str) -> dict:
         """
-        Method that returns dynamically loaded book data.
+        Метод, возвращающий динамически загружаемые данные о книге.
         {
             "author": <str>,
-            "titleonly": <str>,  # book title in plain text
+            "titleonly": <str>,  # название книги в чистом виде
             "items": [{
-                "file": <int>,  # file number
-                "title": <str>,  # chapter title
-                "time_from_start": <str>,  # start point
-                "time_finish": <str>,  # end point
+                "file": <int>,  # номер файла
+                "title": <str>,  # название главы
+                "time_from_start": <str>,  # точка начала
+                "time_finish": <str>,  # точка окончания
             }, ...],
-            "m3u8": <str>,  # link to the m3u8 file
+            "m3u8": <str>,  # ссылка на файл m3u8
         }
         """
 
 
 class PyWebViewJsApi(BaseJsApi):
     """
-    JavaScript runtime environment using Pywebview.
-    Creates a hidden window, loads the book page there, and retrieves data from it.
+    Среда исполнения JS, использующая Pywebview.
+    Создаёт скрытое окно, загружает там страницу книги и берет с нее данные.
     """
 
     def __init__(self):
@@ -52,10 +52,10 @@ class PyWebViewJsApi(BaseJsApi):
 
     def get_book_data(self, url: str) -> dict:
         self._window = webview.create_window("", url=url, hidden=True)
-        # Executing `self._get_book_data` after the page loads
+        # Выполнение `self._get_book_data` после загрузки страницы
         self._window.events.loaded += self._get_book_data
         self._active = True
-        if len(webview.windows) == 1:  # There are currently no running pywebview windows
+        if len(webview.windows) == 1:  # На данный момент нет запущенных окон pywebview
             webview.start()
         else:
             while self._active:
@@ -269,7 +269,7 @@ class AKniga(Driver):
                             r'> svg:has(use[xlink\:href="#performer"]) ~ a'
                         ).text.strip()
                     except AttributeError:
-                        reader = "no data"
+                        reader = "нет данных"
                     duration = el.select_one(
                         "span.link__action--label--time"
                     ).text.strip()
@@ -299,4 +299,3 @@ class AKniga(Driver):
             page_number += 1
 
         return books
-
