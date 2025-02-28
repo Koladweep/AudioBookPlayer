@@ -17,8 +17,7 @@ os.environ["DEBUG_PATH"] = os.path.join(os.environ["APP_DIR"], "debug.log")
 # Path to the temporary data file
 os.environ["TEMP_PATH"] = os.path.join(os.environ["APP_DIR"], "temp.txt")
 # Application version
-os.environ["VERSION"] = "2.1.3"
-
+os.environ["VERSION"] = "2.1.4"
 # DEV
 os.environ["CONSOLE"] = "1"
 os.environ["DEBUG"] = "1"
