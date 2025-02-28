@@ -295,7 +295,7 @@ function removeBook(el, bid) {
         if (title && delete_btn) {
             createNotification(
                 `<div>Book <b>«${title.innerHTML}»</b> Has been removed from library, but the downloaded files remain.</div>
-                <div style="margin-top: 2px; text-decoration: underline; cursor:pointer" onclick="{deleteBook(this, ${bid}, '${title.innerHTML}');this.parentElement.parentElement.remove()}">delte remaining files</div>`,
+                <div style="margin-top: 2px; text-decoration: underline; cursor:pointer" onclick="{deleteBook(this, ${bid}, '${title.innerHTML}');this.parentElement.parentElement.remove()}">delete remaining files</div>`,
                 0, true
             )
         } else if (title) createNotification(`Book <b>«${title.innerHTML}»</b> has been removed from the library.`, 5, true)
