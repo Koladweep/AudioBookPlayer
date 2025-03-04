@@ -4,7 +4,7 @@ import sys
 from .akniga import AKniga
 from .base import Driver, DownloadProcessStatus, BaseDownloadProcessHandler
 from .knigavuhe import KnigaVUhe
-
+from .librivox import LibriVox
 
 if getattr(sys, "frozen", False):
     ROOT_DIR = getattr(sys, "_MEIPASS")
