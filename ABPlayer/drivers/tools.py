@@ -92,9 +92,11 @@ def create_instance_id(obj: ty.Any) -> int:
     setattr(obj.__class__, "_last_instance_id", new_instance_id)
     return new_instance_id
 
+
 def html_to_text(html):
-    soup = BeautifulSoup(html, 'html.parser')
+    soup = BeautifulSoup(html, "html.parser")
     return soup.get_text()
+
 
 def hms2sec(length: str) -> int:
     """
@@ -124,8 +126,11 @@ def html2text(html: str) -> str:
     Converts HTML content to plain text while preserving URLs and paragraphing.
     """
     soup = BeautifulSoup(html, "html.parser")
+    return soup.get_text()
+    """
     output = []
     for element in soup.descendants:
+        
         if element.name == "a" and element.get("href"):
             output.append(f"{element.get_text()} ({element['href']})")
         elif element.name == "br":
@@ -142,6 +147,7 @@ def html2text(html: str) -> str:
         ]:  # Add other inline tags as needed
             output.append(element.get_text())
     return "".join(output).strip()
+    """
 
 
 def instance_id(obj: ty.Any) -> int | None:
