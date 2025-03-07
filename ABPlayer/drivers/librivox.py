@@ -32,7 +32,7 @@ class LibriVox(Driver):
             if 'creator' in metadata.keys():
                 author=metadata['creator']
             if 'title' in metadata.keys():
-                title=metadata['title'][0]
+                title=metadata['title']
             if 'runtime' in metadata.keys():
                 duration=metadata['runtime']
             if 'description' in metadata.keys():
@@ -59,16 +59,16 @@ class LibriVox(Driver):
                 except ValueError:
                     file_index=0 
             if 'name' in keys:
-                file_url=f'{self.site_url}/download/{identifier}/{file['name']}', #explicit
+                file_url=f'{self.site_url}/download/{identifier}/{file['name']}' #explicit
             if 'title' in keys:
-                title=file['title'],
+                title=file['title']
             if 'length' in keys:
                 end_time=hms2sec(file['length'])
             chapters.append(
                 BookItem(
-                    file_url=file_url,
+                    file_url="No Data" if len(file_url)==0 else file_url,
                     file_index=file_index,
-                    title=title,
+                    title= "No Data" if len(title)==0 else title,
                     start_time=0,
                     end_time=end_time
                 ))
@@ -90,7 +90,7 @@ class LibriVox(Driver):
         
 
     def search_books(self, query: str, limit: int = 10, offset: int = 0) -> list[Book]:
-
+        page=offset+1
         books = []
         result=self.session.get(f"https://archive.org/advancedsearch.php?q={urlize('title:('+query+')')}+AND+collection:%22librivoxaudio%22&fl[]=identifier&sort[]=&sort[]=&sort[]=&rows={limit}&page={offset}&output=json").json()['response']['docs']
         hits=[]
@@ -121,7 +121,7 @@ class LibriVox(Driver):
                             duration=duration,
                             url=f'{self.site_url}/details/{identifier}',
                             preview=coverImg if coverImg else "No Data",
-                            driver=self.driver_name,
+                            driver=self.driver_name
                         )
                     )
         return books
