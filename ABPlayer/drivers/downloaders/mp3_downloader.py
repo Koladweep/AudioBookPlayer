@@ -126,7 +126,7 @@ class MP3Downloader(BaseDownloader):
         )
         return Path(
             self.book.dir_path,
-            f"{str(item.file_index + 1).rjust(2, '0')}. {item_title}.mp3",
+            f"{str(int(item.file_index) + 1).rjust(2, '0')}. {item_title}.mp3",
         )
 
     def _download_file(self, file_path: Path, url: str) -> bool:
