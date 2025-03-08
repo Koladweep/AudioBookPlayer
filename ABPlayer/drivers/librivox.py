@@ -104,7 +104,6 @@ class LibriVox(Driver):
         identifier = url.strip("/").split("/")[-1]
         response = self.session.get(f"{self.site_url}/metadata/{identifier}")
         print(f"cached response for {identifier}?: {response.from_cache}")
-        logger.debug(f"cached response for {identifier}?: {response.from_cache}")
         meta_item = response.json()
 
         if "metadata" in meta_item.keys():
@@ -198,7 +197,6 @@ class LibriVox(Driver):
             threading.Thread(
                 target=self.session.cache.remove_expired_responses
             ).start()  # an opportunity to clear up expired cache
-            # logger.debug(f"Fetching book {identifier}")
             ia_bookObj = self.session.get(
                 f"{self.site_url}/metadata/{identifier}"
             ).json()
@@ -227,7 +225,9 @@ class LibriVox(Driver):
                 if "reader" in keys:
                     reader = metadata["reader"]
             else:
-                logger.debug(f"No metadata found for {identifier}")
+                return 
+
+                
             if "files" in keys:
                 files = ia_bookObj["files"]
             cover_filename = next(
