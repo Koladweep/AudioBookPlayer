@@ -2,7 +2,7 @@ import typing as ty
 from models.book import Book, BookItems, BookItem
 from .base import Driver
 from .downloaders import MP3Downloader
-from .tools import safe_name, hms_to_sec, html_to_text, sec_to_hms
+from .tools import safe_name, hms_to_sec, html_to_text
 import threading
 from math import floor
 import os
@@ -20,14 +20,14 @@ CACHE_BACKEND = "sqlite"  # SQLite is the most efficient backend for requests_ca
 CACHE_CONTROL = (
     False  # As already mentioned, I discovered the default expiration to be Null.
 )
-MAX_RETRIES = 5  # Maximum number of retries before giving up on a particular item in search results. If abandoned, the item will not appear in search results. The higher you go, the slower your other results load due to rate-limit.
-BACKOFF_FACTOR = 0.8  # The minimum I would risk before repeating a request. 3 successive retries (worst case) in 1, 2, and 4 seconds respectively.
-RATE_LIMIT = 5  # This is as far as I am willing to push. 5 requests per second. Above this, you might find yourself getting rate-limited or blocked.
+MAX_RETRIES = 3  # Maximum number of retries before giving up on a particular item in search results. If abandoned, the item will not appear in search results. The higher you go, the slower your other results load due to rate-limit.
+BACKOFF_FACTOR = 1  # The maximum I would risk before repeating a request. 3 successive retries (worst case) in 1, 2, and 4 seconds respectively.
+RATE_LIMIT = 5  # Beyond this would be too much. 5 is high on API calls. 1 is too low. 3 is a good balance. Exceeding this could get you rate-limted or blocked.
 RETRY_STATUS_CODES = [500, 502, 503, 504]  # Retrying on these specific server errors.
-MAX_WORKERS = 7  # Maximum number of threads to use for fetching metadata. This is a personal preference. I have a 4-core CPU and I am willing to use 7 threads. You can go higher if you have a better CPU.
+MAX_WORKERS = 32 # Maximum number of threads to use for fetching metadata. This is a personal preference. The higher you go, the more requests you make to the server. The lower you go, the slower your search results load. In event workers get tied up you want to have higher number of workers to keep the search results coming.
 CACHE_NAME = os.path.join(os.environ["APP_DIR"], "librivox_cache.sqlite")
-SELECTED_FORMAT = "128Kbps MP3"  # "64Kbps MP3" is the original LibriVox file format and others are available. 64Kbps is fine but a tad lossy (a bit scratchy), but this is better. Refer to the forum: https://archive.org/post/1053663/file-format
-# The approach in dealing with chapter end time is different for the 64Kbps and 128Kbps because formats used to store time in metadata are different for both. Float for "128Kbps MP3" and hh:mm:ss for "64Kbps MP3".
+SELECTED_FORMAT = "128Kbps MP3" #"64Kbps MP3"  # original format of LibriVox collection, near CD quality. Other formats are available. Refer : https://archive.org/post/1053663/file-format
+
 logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger(__name__)
 
@@ -42,7 +42,7 @@ class LibriVox(Driver):
     site_url = "https://archive.org"
     downloader_factory = MP3Downloader
 
-    # haven't gotten around to fixing retries strategy yet. it isn't working.
+    
     session = CachedSession(
         cache_name=CACHE_NAME,
         cache_control=CACHE_CONTROL,
@@ -64,6 +64,9 @@ class LibriVox(Driver):
         target=session.cache.remove_expired_responses
     ).start()  # an opportunity to clear up expired cache
 
+
+
+
     def get_book(self, url: str) -> Book:
         """
         def get_book(self, url: str) -> Book:
@@ -80,7 +83,8 @@ class LibriVox(Driver):
         """
         threading.Thread(
             target=self.session.cache.remove_expired_responses
-        ).start()  # an opportunity to clear up expired cache
+        ).start()  # an opportunity to clear up expired cache. Had to tie it to some event to save the bother of setting up a cron job.
+        
         (
             identifier,
             author,
@@ -172,7 +176,7 @@ class LibriVox(Driver):
             series_name=None,
             number_in_series=None,
             description=description,
-            reader="No Data",
+            reader="No Data", #This information is available on librivox.org but not in archive.org metadata- at least not for all items.
             duration=duration,
             url=url,
             preview=preview,
@@ -187,6 +191,9 @@ class LibriVox(Driver):
         """
 
         def fetch_item(identifier):
+            """
+            a sub-function to fetch a single book's metadata from the archive.org metadata API
+            """
             threading.Thread(
                 target=self.session.cache.remove_expired_responses
             ).start()  # an opportunity to clear up expired cache
@@ -214,8 +221,8 @@ class LibriVox(Driver):
                     name = metadata["title"]
                 if "runtime" in keys_2:
                     duration = metadata[
-                        "runtime"
-                    ]  # no need to convert to seconds here. This needs to stay formatted for display sake.
+                        "runtime" 
+                    ] #runtime is expected to be formatted as it is. This is headed to the search preview templat.
                 if "reader" in keys:
                     reader = metadata["reader"]
             else:
@@ -274,6 +281,8 @@ class LibriVox(Driver):
     def get_book_series(self, url: str) -> ty.List[Book]:
         """
         to be implemented
+        Yet to find connecting pattern between books in a series in the collection.
+        This is a placeholder because without it the class cannot be instantiated.
         """
         books = ty.List()
         return books
