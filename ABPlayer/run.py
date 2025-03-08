@@ -28,4 +28,3 @@ if args.run_update:
     sys.exit()
 
 main.main()
-

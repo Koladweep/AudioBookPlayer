@@ -44,4 +44,3 @@ def main_window() -> webview.Window:
     window.events.shown += _on_shown
 
     return window
-

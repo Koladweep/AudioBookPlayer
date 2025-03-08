@@ -107,7 +107,7 @@ function onSearchCompleted(resp, clear=true) {
               </div>
             </div>
           </div>
-          <div class="icon-btn add-book-btn" onclick="addBook(this)"><span>to the library</span></div>
+          <div class="icon-btn add-book-btn" onclick="addBook(this)"><span>add to library</span></div>
         </div>`
     }
     if (!resp.length && clear) html = '<div id="no-search-result">Nothing found</div>'

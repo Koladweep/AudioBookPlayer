@@ -279,4 +279,3 @@ class RequestCanceled(JSApiError):
 class UpdateFileNotFound(JSApiError):
     code = 8
     message = "Update file not found"
-

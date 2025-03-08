@@ -130,4 +130,3 @@ def _convert_value(value: str | int | float | bool) -> str:
         f"Invalid data type {type(value).__name__}, "
         "only str, int, float, bool are expected."
     )
-

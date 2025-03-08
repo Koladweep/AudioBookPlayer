@@ -218,4 +218,3 @@ def _convert_book(data: tuple[ty.Any]) -> Book:
         kwargs[field.field_name] = convert_value(field, value)
 
     return Book(**kwargs)
-

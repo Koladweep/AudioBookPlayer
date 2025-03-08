@@ -130,4 +130,3 @@ def make_book_preview(book: Book) -> dict:
         preview=book.preview,
         driver=book.driver,
     )
-

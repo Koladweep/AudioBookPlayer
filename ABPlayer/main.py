@@ -16,6 +16,7 @@ os.environ["DATABASE_PATH"] = os.path.join(os.environ["APP_DIR"], "library.sqlit
 os.environ["DEBUG_PATH"] = os.path.join(os.environ["APP_DIR"], "debug.log")
 # Path to the temporary data file
 os.environ["TEMP_PATH"] = os.path.join(os.environ["APP_DIR"], "temp.txt")
+
 # Application version
 os.environ["VERSION"] = "2.1.4"
 # DEV
@@ -41,14 +42,14 @@ def main() -> None:
             ),
         ),
     )
-
     create_starting_window()
+    webview_storage_path = os.path.join(os.environ["APP_DIR"], "WebViewCache")
     webview.start(
         debug=bool(os.environ.get("DEBUG")),
-        storage_path=os.path.join(os.environ["APP_DIR"], "WebViewCache"),
+        storage_path=webview_storage_path,
     )
+    os.environ["WEBVIEW_STORAGE_PATH"] = webview_storage_path
 
 
 if __name__ == "__main__":
     main()
-

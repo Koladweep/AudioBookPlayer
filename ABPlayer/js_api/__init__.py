@@ -9,4 +9,3 @@ JSApi.sections.append(window_controls.WindowControlsApi)
 JSApi.sections.append(settings.SettingsApi)
 
 __all__ = ["JSApi"]
-

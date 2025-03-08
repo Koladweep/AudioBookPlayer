@@ -502,4 +502,3 @@ class BookAlreadyDownloaded(JSApiError):
 class BookNotDownloaded(JSApiError):
     code = 6
     message = "Book not downloaded."
-
