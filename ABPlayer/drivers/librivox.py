@@ -23,7 +23,7 @@ MAX_RETRIES = 3
 BACKOFF_FACTOR = 1
 RATE_LIMIT = 5  # Beyond this would be too much.
 RETRY_STATUS_CODES = [500, 502, 503, 504]
-MAX_WORKERS = 32  # doesn't matter. The bottleneck is the rate limit.
+MAX_WORKERS = 32  # #workers<=5 if latency <=1000 ms else 5 < #workers <=32
 CACHE_NAME = os.path.join(os.environ["APP_DIR"], "librivox_cache.sqlite")
 SELECTED_FORMAT = "128Kbps MP3"  # "64Kbps MP3"
 # "128Kbps MP3" is the original format of LibriVox collection, ~ CD quality.
@@ -227,7 +227,7 @@ class LibriVox(Driver):
             else:
                 return 
 
-                
+
             if "files" in keys:
                 files = ia_bookObj["files"]
             cover_filename = next(
